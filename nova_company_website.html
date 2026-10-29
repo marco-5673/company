@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA — Build What's Next</title>
+<style>
+  :root{--bg:#0a0b10;--panel:#12141d;--muted:#a6a9b8;--text:#f7f7fb;--accent:#b7ff5a;--purple:#9c82ff;--line:rgba(255,255,255,.12)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer}
+  .orb{position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none;z-index:-1}
+  .orb.one{width:420px;height:420px;right:-120px;top:120px;background:radial-gradient(circle,rgba(156,130,255,.25),transparent 68%)}
+  .orb.two{width:380px;height:380px;left:-180px;top:760px;background:radial-gradient(circle,rgba(183,255,90,.12),transparent 70%)}
+  .wrap{width:min(1160px,calc(100% - 44px));margin:auto}
+  nav{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:2px;font-size:1.12rem}
+  .logo-mark{width:30px;height:30px;display:grid;place-items:center;background:var(--accent);color:#10120c;border-radius:9px;font-weight:1000;transform:rotate(-8deg)}
+  .nav-links{display:flex;gap:30px;color:#c5c6d0;font-size:.92rem}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-actions{display:flex;gap:12px;align-items:center}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:999px;padding:12px 19px;font-weight:750;font-size:.92rem;transition:.2s ease}
+  .btn-primary{background:var(--accent);color:#11150b}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px #b7ff5a25}
+  .btn-ghost{border-color:var(--line);color:var(--text);background:transparent}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .menu-toggle{display:none;background:transparent;color:white;border:0;font-size:1.5rem}
+  .hero{padding:94px 0 76px;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:54px;min-height:620px}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 12px;border:1px solid var(--line);border-radius:99px;color:#d8d9e3;font-size:.78rem;letter-spacing:.8px;text-transform:uppercase}
+  .dot{width:7px;height:7px;background:var(--accent);border-radius:50%;box-shadow:0 0 14px var(--accent)}
+  h1{font-size:clamp(3.1rem,6.4vw,5.6rem);line-height:.99;letter-spacing:-.065em;margin:25px 0}
+  h1 span{color:var(--accent)}
+  .hero p{font-size:1.08rem;color:var(--muted);max-width:520px}
+  .hero-buttons{display:flex;gap:13px;flex-wrap:wrap;margin:30px 0 34px}
+  .trust{display:flex;align-items:center;gap:14px;color:#aeb0bd;font-size:.84rem}
+  .avatars{display:flex;padding-left:5px}
+  .avatar{width:29px;height:29px;border-radius:50%;border:2px solid var(--bg);margin-left:-6px;display:grid;place-items:center;font-size:.72rem;background:linear-gradient(135deg,#f5b18a,#b889ff);color:#18131d}
+  .avatar:nth-child(2){background:linear-gradient(135deg,#b7ff5a,#64d9c8)}.avatar:nth-child(3){background:linear-gradient(135deg,#ffcf71,#f28ba8)}.avatar:nth-child(4){background:linear-gradient(135deg,#8aaaff,#c6a4ff)}
+  .visual{position:relative;min-height:440px;display:grid;place-items:center}
+  .visual-glow{position:absolute;width:360px;height:360px;background:radial-gradient(circle,rgba(183,255,90,.16),transparent 67%);filter:blur(6px)}
+  .dashboard{position:relative;width:min(100%,470px);padding:18px;border:1px solid #ffffff20;border-radius:24px;background:linear-gradient(145deg,#1b1e2bde,#10121ad9);box-shadow:0 30px 90px #0008;transform:rotate(2deg)}
+  .dash-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .dash-label{font-size:.8rem;color:#a7aaba}.live{font-size:.72rem;color:var(--accent);background:#b7ff5a16;padding:5px 9px;border-radius:99px}
+  .metric{padding:22px 0 15px}.metric small{color:var(--muted)}.metric strong{display:block;font-size:2.3rem;letter-spacing:-1px}.up{color:var(--accent);font-size:.82rem}
+  .chart{height:145px;display:flex;align-items:end;gap:9px;padding:10px 0 0;border-bottom:1px solid var(--line)}
+  .bar{flex:1;min-width:8px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--accent),#b7ff5a12);animation:grow .9s ease both;transform-origin:bottom}
+  .bar:nth-child(1){height:28%}.bar:nth-child(2){height:42%}.bar:nth-child(3){height:35%}.bar:nth-child(4){height:58%}.bar:nth-child(5){height:48%}.bar:nth-child(6){height:72%}.bar:nth-child(7){height:65%}.bar:nth-child(8){height:88%}.bar:nth-child(9){height:76%}.bar:nth-child(10){height:100%}
+  @keyframes grow{from{transform:scaleY(.1);opacity:.3}to{transform:scaleY(1);opacity:1}}
+  .dash-bottom{display:flex;justify-content:space-between;padding-top:15px;font-size:.78rem;color:var(--muted)}
+  .float-card{position:absolute;right:-6px;bottom:25px;background:#1d202b;border:1px solid #ffffff20;padding:14px 17px;border-radius:16px;box-shadow:0 15px 40px #0006;transform:rotate(-4deg)}
+  .float-card strong{display:block;font-size:1.2rem}.float-card span{font-size:.78rem;color:var(--muted)}
+  .section{padding:76px 0}
+  .section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:34px}
+  .kicker{font-size:.76rem;color:var(--accent);text-transform:uppercase;letter-spacing:2px;font-weight:800}
+  h2{font-size:clamp(2rem,4vw,3.3rem);letter-spacing:-.045em;line-height:1.1;margin-top:12px}
+  .section-head p{color:var(--muted);max-width:390px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 0;gap:20px}
+  .stat strong{display:block;font-size:2rem;letter-spacing:-1px}.stat span{font-size:.86rem;color:var(--muted)}
+  .services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .service{padding:27px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#151722,#0e1017);transition:.25s}
+  .service:hover{transform:translateY(-5px);border-color:#b7ff5a70}
+  .service-icon{width:46px;height:46px;border-radius:14px;background:#b7ff5a15;color:var(--accent);display:grid;place-items:center;font-size:1.35rem;margin-bottom:24px}
+  .service h3{font-size:1.15rem;margin-bottom:9px}.service p{font-size:.92rem;color:var(--muted)}
+  .service a{display:inline-block;margin-top:22px;font-size:.87rem;color:var(--accent);font-weight:750}
+  .work-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+  .work-card{min-height:290px;border:1px solid var(--line);border-radius:22px;padding:26px;overflow:hidden;position:relative;background:#151722}
+  .work-card.large{background:radial-gradient(ellipse at 80% 15%,#9c82ff45,transparent 45%),#151722}
+  .work-card.small{background:radial-gradient(ellipse at 90% 15%,#b7ff5a26,transparent 42%),#151722}
+  .work-card h3{font-size:1.45rem;position:relative;z-index:1}.work-card p{color:var(--muted);font-size:.9rem;max-width:320px;margin-top:8px;position:relative;z-index:1}
+  .mockup{position:absolute;right:22px;bottom:-18px;width:70%;height:135px;border:1px solid #ffffff30;border-radius:15px 15px 0 0;background:linear-gradient(135deg,#282b3c,#171925);padding:14px;transform:rotate(-4deg)}
+  .mock-line{height:7px;width:45%;background:#ffffff30;border-radius:9px;margin-bottom:9px}.mock-boxes{display:flex;gap:8px;margin-top:16px}.mock-box{height:60px;flex:1;border-radius:8px;background:linear-gradient(135deg,#b7ff5a65,#b7ff5a08)}.mock-box:nth-child(2){background:linear-gradient(135deg,#9c82ff85,#9c82ff08)}
+  .small .mockup{width:55%;height:115px;right:14px}.small .mock-box{height:40px}
+  .quote{margin-top:16px;border:1px solid var(--line);border-radius:22px;padding:30px;background:#12141d;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .quote blockquote{font-size:clamp(1.1rem,2.5vw,1.65rem);letter-spacing:-.025em;max-width:730px}.quote blockquote span{color:var(--accent)}
+  .quote-author{display:flex;align-items:center;gap:12px;white-space:nowrap}.author-pic{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#f5b18a,#9c82ff);display:grid;place-items:center;color:#16131d;font-weight:900}.quote-author small{display:block;color:var(--muted)}
+  .cta{padding:60px 32px;text-align:center;border:1px solid #b7ff5a40;border-radius:28px;background:radial-gradient(ellipse at 50% 0%,#b7ff5a1b,transparent 65%),#11131a}
+  .cta h2{max-width:700px;margin:14px auto}.cta p{color:var(--muted);margin:14px auto 26px;max-width:480px}
+  footer{padding:30px 0 36px;margin-top:70px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:.83rem}
+  .footer-links{display:flex;gap:20px}.footer-links a:hover{color:var(--accent)}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:var(--accent);color:#10120c;padding:12px 18px;border-radius:12px;font-weight:750;box-shadow:0 10px 40px #0008;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+  @media(max-width:800px){.nav-links{display:none;position:absolute;top:75px;left:22px;right:22px;background:#171923;border:1px solid var(--line);padding:20px;border-radius:16px;flex-direction:column;gap:17px;z-index:5}.nav-links.open{display:flex}.nav-actions .btn{display:none}.menu-toggle{display:block}.hero{grid-template-columns:1fr;padding-top:65px;gap:10px}.visual{min-height:390px}.section-head{display:block}.section-head p{margin-top:15px}.services{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.quote{align-items:flex-start;flex-direction:column}.work-grid{grid-template-columns:1fr}.work-card{min-height:260px}}
+  @media(max-width:520px){.wrap{width:min(100% - 32px,1160px)}nav{height:70px}.hero{padding:55px 0 45px}h1{font-size:3.25rem}.visual{min-height:330px}.dashboard{padding:14px}.chart{height:110px}.float-card{right:0;bottom:6px}.services{grid-template-columns:1fr}.section{padding:54px 0}.stats{gap:18px}.stat strong{font-size:1.7rem}.quote{padding:22px}.cta{padding:44px 20px}footer{flex-direction:column}.footer-links{flex-wrap:wrap}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="orb one"></div><div class="orb two"></div>
+<header class="wrap">
+  <nav aria-label="Main navigation">
+    <a class="logo" href="#home" aria-label="NOVA home"><span class="logo-mark">N</span> NOVA<span style="color:var(--accent)">.</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#services">Services</a><a href="#work">Our work</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </div>
+    <div class="nav-actions"><a class="btn btn-primary" href="#contact">Let's talk <span>↗</span></a><button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">☰</button></div>
+  </nav>
+</header>
+<main>
+  <section class="hero wrap" id="home">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Independent digital studio</div>
+      <h1>Ideas into<br><span>impact.</span><br>That's NOVA.</h1>
+      <p>We help ambitious businesses turn bold ideas into remarkable digital experiences, powerful brands, and products people love.</p>
+      <div class="hero-buttons"><a class="btn btn-primary" href="#contact">Start a project <span>↗</span></a><a class="btn btn-ghost" href="#work">Explore our work <span>↓</span></a></div>
+      <div class="trust"><div class="avatars"><span class="avatar">J</span><span class="avatar">A</span><span class="avatar">M</span><span class="avatar">S</span></div><span>Trusted by teams building what's next</span></div>
+    </div>
+    <div class="visual" aria-label="Illustration of a business analytics dashboard">
+      <div class="visual-glow"></div>
+      <div class="dashboard">
+        <div class="dash-top"><span class="dash-label">NOVA / Growth overview</span><span class="live">● LIVE DATA</span></div>
+        <div class="metric"><small>Total performance</small><strong>₹ 8,42,650</strong><span class="up">↗ 24.8% <span style="color:var(--muted)">vs. last month</span></span></div>
+        <div class="chart" aria-hidden="true"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+        <div class="dash-bottom"><span>01 OCT — 30 OCT</span><span>↗ +18.6% growth</span></div>
+      </div>
+      <div class="float-card"><span>Customer satisfaction</span><strong>98.4% <span style="color:var(--accent);font-size:.9rem">↗</span></strong><span>You're doing amazing.</span></div>
+    </div>
+  </section>
+  <section class="wrap section reveal" id="about">
+    <div class="stats">
+      <div class="stat"><strong>120<span style="color:var(--accent)">+</span></strong><span>Projects delivered</span></div>
+      <div class="stat"><strong>48<span style="color:var(--accent)">+</span></strong><span>Happy partners</span></div>
+      <div class="stat"><strong>8<span style="color:var(--accent)"> yrs</span></strong><span>Making ideas real</span></div>
+      <div class="stat"><strong>3.5<span style="color:var(--accent)">×</span></strong><span>Average client growth*</span></div>
+    </div>
+  </section>
+  <section class="wrap section reveal" id="services">
+    <div class="section-head"><div><div class="kicker">What we do</div><h2>Good thinking.<br>Great execution.</h2></div><p>From the first sketch to the final launch, we bring strategy, creativity, and technology together to move your business forward.</p></div>
+    <div class="services">
+      <article class="service"><div class="service-icon">✳</div><h3>Brand & Strategy</h3><p>Build a brand people remember. We shape your story, sharpen your positioning, and create a visual identity with purpose.</p><a href="#contact">Build your brand ↗</a></article>
+      <article class="service"><div class="service-icon">⌘</div><h3>Web & Experience</h3><p>Fast, accessible, conversion-focused websites that look exceptional and make every interaction feel effortless.</p><a href="#contact">Create an experience ↗</a></article>
+      <article class="service"><div class="service-icon">◈</div><h3>Digital Products</h3><p>Turn complex challenges into useful products with thoughtful UX, smart engineering, and room to scale.</p><a href="#contact">Make it happen ↗</a></article>
+    </div>
+  </section>
+  <section class="wrap section reveal" id="work">
+    <div class="section-head"><div><div class="kicker">Selected work</div><h2>Made to move<br>business forward.</h2></div><p>A glimpse of the kind of meaningful change we love creating with our partners.</p></div>
+    <div class="work-grid">
+      <article class="work-card large"><div class="kicker">01 / Brand + digital</div><h3>Forme — Better, by design.</h3><p>A fresh identity and digital storefront for a new generation of conscious living.</p><div class="mockup" aria-hidden="true"><div class="mock-line"></div><div class="mock-line" style="width:70%;height:12px;background:#ffffff55"></div><div class="mock-boxes"><div class="mock-box"></div><div class="mock-box"></div><div class="mock-box"></div></div></div></article>
+      <article class="work-card small"><div class="kicker">02 / Product design</div><h3>Pulse — Clarity in every number.</h3><p>A smarter dashboard that makes business insights feel simple.</p><div class="mockup" aria-hidden="true"><div class="mock-line"></div><div class="mock-boxes"><div class="mock-box"></div><div class="mock-box"></div></div></div></article>
+    </div>
+    <div class="quote"><blockquote>“NOVA didn't just deliver a website. They helped us see our business in a <span>whole new way.</span>”</blockquote><div class="quote-author"><div class="author-pic">RK</div><div><strong>Riya Kapoor</strong><small>Founder, illustrative client quote</small></div></div></div>
+  </section>
+  <section class="wrap section reveal" id="contact">
+    <div class="cta"><div class="kicker">Your next chapter starts here</div><h2>Have a big idea?<br>Let's make it <span style="color:var(--accent)">real.</span></h2><p>Tell us what you're imagining. We'll bring the curiosity, the craft, and a plan to get it moving.</p><a class="btn btn-primary" href="mailto:hello@nova.example?subject=Let's%20start%20a%20project">hello@nova.example <span>↗</span></a></div>
+  </section>
+</main>
+<footer class="wrap"><a class="logo" href="#home"><span class="logo-mark">N</span> NOVA<span style="color:var(--accent)">.</span></a><span>© <span id="year"></span> NOVA Studio. Built for what's next.</span><div class="footer-links"><a href="#services">Services</a><a href="#work">Work</a><a href="#contact">Contact</a></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite">Thanks for your interest — email us to get started!</div>
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    menuToggle.textContent = isOpen ? '✕' : '☰';
+  });
+  navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    menuToggle.textContent = '☰';
+  }));
+  document.getElementById('year').textContent = new Date().getFullYear();
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  document.querySelectorAll('a[href="#contact"]').forEach(link => {
+    link.addEventListener('click', () => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      window.setTimeout(() => toast.classList.remove('show'), 2600);
+    });
+  });
+</script>
+</body>
+</html>
